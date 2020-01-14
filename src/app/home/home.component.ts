@@ -39,18 +39,20 @@ export class HomeComponent {
 
         // stop here if form is invalid
         if (this.addUserForm.invalid) {
+            this.error = 'Please resolve errors before proceeding.';
             return;
+        } else {
+            this.loading = true;
+            this.error = '';
         }
-
-        this.loading = true;
-        // this.authenticationService.login(this.f.username.value, this.f.password.value)
+        // this.userService.login(this.f.username.value, this.f.password.value)
         //     .pipe(first())
         //     .subscribe(
         //         data => {
-        //             this.router.navigate([this.returnUrl]);
+        //             // this.router.navigate([this.returnUrl]);
         //         },
         //         error => {
-        //             this.error = error;
+        //             this.error = '';
         //             this.loading = false;
         //         });
     }
