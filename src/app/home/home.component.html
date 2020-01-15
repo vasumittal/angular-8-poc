@@ -1,27 +1,27 @@
 ﻿<div class="card mt-4">
-    <h4 class="card-header">Add User</h4>
+    <h4 class="card-header">Users</h4>
     <div class="card-body">
         <form [formGroup]="addUserForm" (ngSubmit)="onSubmit()">
             <div class="form-row">
-                <div class="col-md-3  mt-1 mr-4">
+                <div class="col-md-3  mt-1 mr-2">
                     <input type="text" formControlName="firstname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }" placeholder="First name"/>
                     <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
                         <div *ngIf="f.firstname.errors.required">First name is required</div>
                     </div>
                 </div>
-                <div class="col-md-3  mt-1 mr-4">
+                <div class="col-md-3  mt-1 mr-3">
                     <input type="text" formControlName="lastname" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.lastname.errors }" placeholder="Last name"/>
                     <div *ngIf="submitted && f.lastname.errors" class="invalid-feedback">
                         <div *ngIf="f.lastname.errors.required">Last name is required</div>
                     </div>
                 </div>
-                <div class="col-md-3  mt-1 mr-4">
+                <div class="col-md-4  mt-1 mr-6">
                     <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" placeholder="User name"/>
                     <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
                         <div *ngIf="f.username.errors.required">Username is required</div>
                     </div>
                 </div>
-                <div class="col-md-1  mt-1 mr-4">
+                <div class="col-md-1  mt-1 mr-9">
                     <button [disabled]="loading" class="btn btn-primary">
                         <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
                         Add
@@ -29,16 +29,43 @@
                 </div>
                 <div *ngIf="submitted && error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
             </div>
+            <div class="form-row">
+                <div class="col-md-11 mt-4">
+                    <div class="card mt-10">
+                        <h4 class="card-header">User List</h4>
+                        <div class="card-body">
+                            <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
+                            <table *ngIf="users" class="table">
+                                <thead>
+                                    <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Username</th>
+                                    <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let user of users">
+                                    <td>{{user.firstName}}</td>
+                                    <td>{{user.lastName}}</td>
+                                    <td>{{user.username}}</td>
+                                    <td>
+                                        <button [disabled]="loading" class="btn btn-primary mr-2" (click)="onEdit(user)">
+                                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                            Edit
+                                        </button>
+                                        <button [disabled]="loading" class="btn btn-primary" (click)="onDelete(user)">
+                                            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                                            Delete
+                                        </button>
+                                    </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </form>
-    </div>
-</div>
-<div class="card mt-4">
-    <h4 class="card-header">User List</h4>
-    <div class="card-body">
-        <h6>User List</h6>
-        <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
-        <ul *ngIf="users">
-            <li *ngFor="let user of users">{{user.firstName}} {{user.lastName}}</li>
-        </ul>
     </div>
 </div>

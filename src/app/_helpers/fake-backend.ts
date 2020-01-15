@@ -5,7 +5,7 @@ import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
 
 import { User } from '@app/_models';
 
-const users: User[] = [{ id: 1, username: 'test', password: 'test', firstName: 'Test', lastName: 'User' }];
+const users: User[] = [{id:1,username:'test',password:'test',firstName:'Test',lastName:'User'}];
 
 @Injectable()
 export class FakeBackendInterceptor implements HttpInterceptor {
@@ -25,6 +25,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return authenticate();
                 case url.endsWith('/users') && method === 'GET':
                     return getUsers();
+                case url.endsWith('/users') && method === 'POST':
+                    return addUser();
                 default:
                     // pass through any requests not handled above
                     return next.handle(request);
@@ -47,7 +49,15 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function getUsers() {
             if (!isLoggedIn()) return unauthorized();
-            return ok(users);
+            return ok(JSON.parse(localStorage.getItem('users'))['users']);
+        }
+
+        function addUser() {
+            const { userObj } = body;
+            const userList = JSON.parse(localStorage.getItem('users'));
+            userList.users.push(userObj);
+            localStorage.setItem('users', JSON.stringify(userList));
+            return ok(userObj)
         }
 
         // helper functions

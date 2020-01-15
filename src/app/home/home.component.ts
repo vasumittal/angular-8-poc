@@ -36,24 +36,41 @@ export class HomeComponent {
 
     onSubmit() {
         this.submitted = true;
-
+        this.loading = true;
         // stop here if form is invalid
         if (this.addUserForm.invalid) {
             this.error = 'Please resolve errors before proceeding.';
             return;
-        } else {
-            this.loading = true;
-            this.error = '';
         }
-        // this.userService.login(this.f.username.value, this.f.password.value)
-        //     .pipe(first())
-        //     .subscribe(
-        //         data => {
-        //             // this.router.navigate([this.returnUrl]);
-        //         },
-        //         error => {
-        //             this.error = '';
-        //             this.loading = false;
-        //         });
+        const newUser: User = {"firstName": this.f.firstname.value, "lastName": this.f.lastname.value, "password": "test", "id": this.users.length + 1, "username": this.f.username.value};
+        this.userService.addUser(newUser)
+            .pipe(first())
+            .subscribe(
+                data => {
+                    this.userService.getAll().pipe(first()).subscribe(users => {
+                        this.loading = false;
+                        this.users = users;
+                        this.error = '';
+                        this.submitted = false;
+                        this.addUserForm.reset({
+                            'firstname': '',
+                            'lastname': '',
+                            'username': ''
+                        });  
+                    });
+                                      
+                },
+                error => {
+                    this.error = '';
+                    this.loading = false;
+                });
+    }
+    
+    onEdit(user: User) {
+        console.log(user);
+    }
+
+    onDelete(user: User) {
+        console.log(user);
     }
 }
