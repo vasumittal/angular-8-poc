@@ -27,6 +27,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                     return getUsers();
                 case url.endsWith('/users') && method === 'POST':
                     return addUser();
+                case url.match(/\/users\/\d+$/) && method === 'DELETE':
+                        return deleteUser();
                 default:
                     // pass through any requests not handled above
                     return next.handle(request);
@@ -53,11 +55,19 @@ export class FakeBackendInterceptor implements HttpInterceptor {
         }
 
         function addUser() {
+            if (!isLoggedIn()) return unauthorized();
             const { userObj } = body;
             const userList = JSON.parse(localStorage.getItem('users'));
             userList.users.push(userObj);
             localStorage.setItem('users', JSON.stringify(userList));
             return ok(userObj)
+        }
+        function deleteUser() {
+            if (!isLoggedIn()) return unauthorized();
+            let users = JSON.parse(localStorage.getItem('users'))['users'];
+            users = users.filter(x => x.id !== idFromUrl());
+            localStorage.setItem('users', JSON.stringify(users));
+            return ok(idFromUrl());
         }
 
         // helper functions
@@ -76,6 +86,11 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function isLoggedIn() {
             return headers.get('Authorization') === `Basic ${window.btoa('test:test')}`;
+        }
+
+        function idFromUrl() {
+            const urlParts = url.split('/');
+            return parseInt(urlParts[urlParts.length - 1]);
         }
     }
 }

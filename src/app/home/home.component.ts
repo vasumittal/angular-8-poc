@@ -36,13 +36,14 @@ export class HomeComponent {
 
     onSubmit() {
         this.submitted = true;
-        this.loading = true;
         // stop here if form is invalid
         if (this.addUserForm.invalid) {
             this.error = 'Please resolve errors before proceeding.';
-            return;
+            return false;
         }
         const newUser: User = {"firstName": this.f.firstname.value, "lastName": this.f.lastname.value, "password": "test", "id": this.users.length + 1, "username": this.f.username.value};
+        
+        this.loading = true;
         this.userService.addUser(newUser)
             .pipe(first())
             .subscribe(
@@ -71,6 +72,27 @@ export class HomeComponent {
     }
 
     onDelete(user: User) {
-        console.log(user);
+        this.loading = true;
+        this.submitted = false;
+        this.userService.deleteUser(user.id)
+            .pipe(first())
+            .subscribe(
+                data => {
+                    this.userService.getAll().pipe(first()).subscribe(users => {
+                        this.loading = false;
+                        this.users = users;
+                        this.error = '';
+                        this.addUserForm.reset({
+                            'firstname': '',
+                            'lastname': '',
+                            'username': ''
+                        });  
+                    });
+                                      
+                },
+                error => {
+                    this.error = '';
+                    this.loading = false;
+                });
     }
 }
